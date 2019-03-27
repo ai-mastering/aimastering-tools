@@ -72,7 +72,7 @@ Target loudness -6dB
 aimastering master --input input.wav --output output.wav --target-loudness -6
 ```
 
-#### Details
+#### Other options
 
 Please see
 
