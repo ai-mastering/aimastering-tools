@@ -203,12 +203,52 @@ func main() {
 				if err != nil  {
 					log.Fatal(err)
 				}
+				log.Printf("The Output audio was saved to %s\n", output)
+
+				outputVideo := c.String("output-video")
+				if outputVideo != "" {
+					// wait for the video encode completion
+					for mastering.VideoStatus == "waiting" {
+						mastering, _, err = client.MasteringApi.GetMastering(auth, mastering.Id)
+						if err != nil {
+							log.Fatal(err)
+						}
+						log.Print("waiting for the video encode completion\n")
+						time.Sleep(5 * time.Second)
+					}
+
+					if mastering.VideoStatus != "succeeded" {
+						log.Fatalf("Video encode failed with status %s", mastering.VideoStatus)
+					}
+
+					// download output video
+					videoDownloadToken, _, err := client.VideoApi.GetVideoDownloadToken(auth, mastering.OutputVideoId)
+
+					// http get signed url
+					resp, err := http.Get(videoDownloadToken.DownloadUrl)
+					if err != nil {
+						log.Fatal(err)
+					}
+					defer resp.Body.Close()
+
+					outputVideoFile, err := os.Create(outputVideo)
+					if err != nil  {
+						log.Fatal(err)
+					}
+					defer outputVideoFile.Close()
+
+					// write output
+					_, err = io.Copy(outputVideoFile, resp.Body)
+					if err != nil  {
+						log.Fatal(err)
+					}
+					log.Printf("The Output video was saved to %s\n", outputVideo)
+				}
 
 				if c.Bool("remove") {
 					client.MasteringApi.DeleteMastering(auth, mastering.Id)
 				}
 
-				log.Printf("The Output audio was saved to %s\n", output)
 				return nil
 			},
 			Flags: []cli.Flag{
@@ -219,6 +259,12 @@ func main() {
 					Name:        "reference",
 					Usage:       "Reference audio file path",
 					Hidden:      true,
+					Value:       "",
+				},
+				cli.StringFlag{
+					Name:        "output-video",
+					Usage:       "Output video file path. Save video only when specified.",
+					Hidden:      false,
 					Value:       "",
 				},
 				cli.Float64Flag{
