@@ -1,0 +1,105 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang
+    working_directory: /go/src/github.com/ai-mastering/aimastering_tools
+    steps:
+      - checkout
+      - run: sudo chmod -R 777 /go
+      - run: go env
+      - run: go get -u github.com/jteeuwen/go-bindata/...
+      - run: dep ensure
+      - run:
+          name: build
+          command: |
+            go-bindata data/
+
+            GIT_TAG=$CIRCLE_TAG
+            GIT_HASH=$CIRCLE_SHA1
+            BUILD_TIME=$(date '+%Y/%m/%d %H:%M:%S %Z')
+            GO_VERSION=$(go version)
+
+            for GOOS_LOOP in windows linux darwin; do
+              for GOARCH_LOOP in 386 amd64; do
+                case "$GOOS_LOOP" in
+                 windows) EXE_EXT=".exe" ;;
+                 *) EXE_EXT="" ;;
+                esac
+
+                GOOS=$GOOS_LOOP GOARCH=$GOARCH_LOOP \
+                  go build \
+                  -ldflags "\
+                    -w -s \
+                    -X main.gitTag=$GIT_TAG \
+                    -X main.gitHash=$GIT_HASH \
+                    -X \"main.buildTime=$BUILD_TIME\" \
+                    -X \"main.goVersion=$GO_VERSION\" \
+                    -X main.goos=$GOOS_LOOP \
+                    -X main.goarch=$GOARCH_LOOP \
+                    " \
+                  -o /tmp/results/aimastering-$GOOS_LOOP-$GOARCH_LOOP$EXE_EXT \
+                  main.go
+              done
+            done
+      - store_artifacts:
+          path: /tmp/results
+          destination: results
+      - persist_to_workspace:
+          root: /tmp/results
+          paths:
+          - "./*"
+  deploy:
+    docker:
+    - image: circleci/golang
+    working_directory: /go/src/github.com/ai-mastering/aimastering_tools
+    steps:
+    - checkout
+    - attach_workspace:
+        at: /tmp/results
+    - run: sudo chmod -R 777 /go
+    - run: go get github.com/aktau/github-release
+    - run:
+        name:
+        command: |
+          GIT_TAG=$CIRCLE_TAG
+
+          github-release delete \
+            --user ai-mastering \
+            --repo aimastering-tools \
+            --tag "$GIT_TAG" || echo not exists
+
+          github-release release \
+            --user ai-mastering \
+            --repo aimastering-tools \
+            --tag "$GIT_TAG" \
+            --name "$GIT_TAG" \
+            --description "$GIT_TAG was released"
+
+          cd /tmp/results
+          ls -1 | xargs -n1 -P0 -I{} -- \
+          github-release upload \
+            --user ai-mastering \
+            --repo aimastering-tools \
+            --tag $GIT_TAG \
+            --name {} \
+            --file {}
+    - store_artifacts:
+        path: /tmp/results
+        destination: results
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+    - build:
+        filters:
+          tags:
+            only: /.*/
+    - deploy:
+        filters:
+          tags:
+            only: /.*/
+          branches:
+            ignore: /.*/
+        requires:
+        - build
