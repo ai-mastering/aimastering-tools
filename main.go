@@ -50,6 +50,15 @@ func main() {
 	var accessToken string
 	var input string
 	var output string
+	var userAgent string
+
+	userAgentFlag := cli.StringFlag{
+		Name:        "user-agent",
+		Usage:       "User agent text used for API request",
+		Hidden:      false,
+		Value:       "aimastering-cli",
+		Destination: &userAgent,
+	}
 
 	accessTokenFlag := cli.StringFlag{
 		Name:        "access-token",
@@ -93,7 +102,10 @@ func main() {
 					log.Fatal("--output required")
 				}
 
-				client := aimastering.NewAPIClient(aimastering.NewConfiguration())
+				cfg := aimastering.NewConfiguration()
+				cfg.UserAgent = userAgent
+				log.Printf("User agent:%s\n", userAgent)
+				client := aimastering.NewAPIClient(cfg)
 				auth := context.WithValue(context.Background(), aimastering.ContextAPIKey, aimastering.APIKey{
 					Key: accessToken,
 				})
@@ -255,6 +267,7 @@ func main() {
 				accessTokenFlag,
 				inputFlag,
 				outputFlag,
+				userAgentFlag,
 				cli.StringFlag{
 					Name:        "reference",
 					Usage:       "Reference audio file path",
