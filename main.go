@@ -24,18 +24,29 @@ var (
 
 func uploadAudio(client *aimastering.APIClient, auth context.Context, audioPath string) (int32) {
 	// upload input audio
-	audioFile, err := os.Open(audioPath)
-	if err != nil {
-		log.Fatal(err)
+	if audioPath == "-" {
+		audio, _, err := client.AudioApi.CreateAudio(auth, map[string]interface{}{
+			"file":  os.Stdin,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		return audio.Id
+	} else {
+		audioFile, err := os.Open(audioPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer audioFile.Close()
+
+		audio, _, err := client.AudioApi.CreateAudio(auth, map[string]interface{}{
+			"file":  audioFile,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		return audio.Id
 	}
-	defer audioFile.Close()
-	audio, _, err := client.AudioApi.CreateAudio(auth, map[string]interface{}{
-		"file":  audioFile,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	return audio.Id
 }
 
 func main() {
@@ -71,7 +82,7 @@ func main() {
 
 	inputFlag := cli.StringFlag{
 		Name:        "input, i",
-		Usage:       "Input audio file path",
+		Usage:       "Input audio file path. If - is specified, stdin is used.",
 		Hidden:      false,
 		Value:       "",
 		Destination: &input,
@@ -79,7 +90,7 @@ func main() {
 
 	outputFlag := cli.StringFlag{
 		Name:        "output, o",
-		Usage:       "Output audio file path",
+		Usage:       "Output audio file path. If - is specified, stdout is used.",
 		Hidden:      false,
 		Value:       "",
 		Destination: &output,
@@ -204,18 +215,27 @@ func main() {
 				}
 				defer resp.Body.Close()
 
-				outputAudioFile, err := os.Create(output)
-				if err != nil  {
-					log.Fatal(err)
-				}
-				defer outputAudioFile.Close()
+				if output == "-" {
+					// write output
+					_, err = io.Copy(os.Stdout, resp.Body)
+					if err != nil  {
+						log.Fatal(err)
+					}
+					log.Print("The Output audio was saved to stdout\n")
+				} else {
+					outputAudioFile, err := os.Create(output)
+					if err != nil  {
+						log.Fatal(err)
+					}
+					defer outputAudioFile.Close()
 
-				// write output
-				_, err = io.Copy(outputAudioFile, resp.Body)
-				if err != nil  {
-					log.Fatal(err)
+					// write output
+					_, err = io.Copy(outputAudioFile, resp.Body)
+					if err != nil  {
+						log.Fatal(err)
+					}
+					log.Printf("The Output audio was saved to %s\n", output)
 				}
-				log.Printf("The Output audio was saved to %s\n", output)
 
 				outputVideo := c.String("output-video")
 				if outputVideo != "" {
