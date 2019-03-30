@@ -34,6 +34,22 @@ sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/downloa
 sudo chmod +x /usr/local/bin/aimastering
 ```
 
+### Bash completion
+
+Please add following command to ~/.bash_profile
+
+```bash
+eval "$(aimastering autocomplete --shell bash)"
+```
+
+### Zsh completion (not tested)
+
+Please add following command to ~/.zshenv
+
+```bash
+eval "$(aimastering autocomplete --shell zsh)"
+```
+
 ## Command line tool usage
 
 ### Auth

@@ -395,6 +395,43 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:      "autocomplete",
+			Usage:     "Print commands to initialize autocompletion",
+			UsageText: "aimastering autocomplete --shell bash",
+			HideHelp:  false,
+			Action: func(c *cli.Context) error {
+				switch c.String("shell") {
+				case "bash":
+					fmt.Print(`_cli_bash_autocomplete() {
+							local cur opts base
+							COMPREPLY=()
+							cur="${COMP_WORDS[COMP_CWORD]}"
+							opts=$( ${COMP_WORDS[@]:0:$COMP_CWORD} --generate-bash-completion )
+							COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+							return 0
+						}
+						complete -F _cli_bash_autocomplete aimastering`)
+				case "zsh":
+					fmt.Print(`_cli_zsh_autocomplete() {
+  							local -a opts
+  							opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} --generate-bash-completion)}")
+  							_describe 'values' opts
+  							return
+						}
+						compdef _cli_zsh_autocomplete aimastering`)
+				}
+				return nil
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "shell",
+					Usage:  "Specify shell bash/zsh",
+					Hidden: false,
+					Value:  "bash",
+				},
+			},
+		},
 	}
 
 	err := app.Run(os.Args)
