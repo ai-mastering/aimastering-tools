@@ -24,7 +24,7 @@ This makes easy to use the API.
 
 Please download
 
-[AI Mastering CLI client for windows](https://github.com/ai-mastering/aimastering-tools/releases/download/v1.0.0/aimastering-windows-386.exe)
+[AI Mastering CLI client for windows](https://github.com/ai-mastering/aimastering-tools/releases/download/v1.0.1/aimastering-windows-386.exe)
 
 ### Get AI Mastering API access token
 
