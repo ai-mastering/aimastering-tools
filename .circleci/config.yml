@@ -27,6 +27,10 @@ jobs:
                  *) EXE_EXT="" ;;
                 esac
 
+                if [ "$GOOS_LOOP/$GOARCH_LOOP" = "darwin/386" ]; then
+                  continue
+                fi
+
                 GOOS=$GOOS_LOOP GOARCH=$GOARCH_LOOP \
                   go build \
                   -ldflags "\
