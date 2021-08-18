@@ -9,7 +9,7 @@ jobs:
       - run: sudo chmod -R 777 /go
       - run: go env
       - run: go get -u github.com/jteeuwen/go-bindata/...
-      - run: dep ensure
+      - run: go mod tidy
       - run:
           name: build
           command: |
