@@ -9,8 +9,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"sort"
+	//"sort"
 	"time"
+	"github.com/antihax/optional"
 )
 
 var (
@@ -25,9 +26,8 @@ var (
 func uploadAudio(client *aimastering.APIClient, auth context.Context, audioPath string) (int32) {
 	// upload input audio
 	if audioPath == "-" {
-		audio, _, err := client.AudioApi.CreateAudio(auth, map[string]interface{}{
-			"file":  os.Stdin,
-		})
+		create_options := aimastering.AudioApiCreateAudioOpts{File: optional.NewInterface(os.Stdin)}
+		audio, _, err := client.AudioApi.CreateAudio(auth, &create_options)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -39,9 +39,8 @@ func uploadAudio(client *aimastering.APIClient, auth context.Context, audioPath 
 		}
 		defer audioFile.Close()
 
-		audio, _, err := client.AudioApi.CreateAudio(auth, map[string]interface{}{
-			"file":  audioFile,
-		})
+		create_options := aimastering.AudioApiCreateAudioOpts{File: optional.NewInterface(audioFile)}
+		audio, _, err := client.AudioApi.CreateAudio(auth, &create_options)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -126,42 +125,43 @@ func main() {
 				log.Printf("The input audio was uploaded id %d\n", inputAudioId)
 
 				// start the mastering
-				masteringOptions := map[string]interface{}{
-					"mode": "custom",
-					"targetLoudness": float32(c.Float64("target-loudness")),
-					"targetLoudnessMode": c.String("target-loudness-mode"),
-					"mastering": float32(c.Float64("mastering-level")) > 0,
-					"masteringMatchingLevel": float32(c.Float64("mastering-level")),
-					"masteringAlgorithm": c.String("mastering-algorithm"),
-					"ceilingMode": c.String("ceiling-mode"),
-					"ceiling": float32(c.Float64("ceiling")),
-					"bassPreservation": c.Bool("bass-preservation"),
-					"preset": c.String("preset"),
-					"noiseReduction": c.Bool("noise-reduction"),
-					"lowCutFreq": float32(c.Float64("low-cut-freq")),
-					"highCutFreq": float32(c.Float64("high-cut-freq")),
-					"sampleRate": int32(c.Int("sample-rate")),
-					"bitDepth": int32(c.Int("bit-depth")),
-					"outputFormat": c.String("output-format"),
-					"oversample": float32(c.Int("oversample")),
+				masteringOptions := aimastering.MasteringApiCreateMasteringOpts{
+					Mode: optional.NewString("custom"),
+					TargetLoudness: optional.NewFloat32(float32(c.Float64("target-loudness"))),
+					TargetLoudnessMode: optional.NewString(c.String("target-loudness-mode")),
+					Mastering: optional.NewBool(c.Float64("mastering-level") > 0),
+					MasteringMatchingLevel: optional.NewFloat32(float32(c.Float64("mastering-level"))),
+					MasteringAlgorithm: optional.NewString(c.String("mastering-algorithm")),
+					CeilingMode: optional.NewString(c.String("ceiling-mode")),
+					Ceiling: optional.NewFloat32(float32(c.Float64("ceiling"))),
+					BassPreservation: optional.NewBool(c.Bool("bass-preservation")),
+					Preset: optional.NewString(c.String("preset")),
+					NoiseReduction: optional.NewBool(c.Bool("noise-reduction")),
+					LowCutFreq: optional.NewFloat32(float32(c.Float64("low-cut-freq"))),
+					HighCutFreq: optional.NewFloat32(float32(c.Float64("high-cut-freq"))),
+					SampleRate: optional.NewInt32(int32(c.Int("sample-rate"))),
+					BitDepth: optional.NewInt32(int32(c.Int("bit-depth"))),
+					OutputFormat: optional.NewString(c.String("output-format")),
+					Oversample: optional.NewInt32(int32(c.Int("oversample"))),
 				}
+
 				if c.String("reference") != "" {
 					referenceAudioId := uploadAudio(client, auth, input)
 					log.Printf("The reference audio was uploaded id %d\n", referenceAudioId)
-					masteringOptions["reference_audio_id"] = referenceAudioId
+					masteringOptions.ReferenceAudioId = optional.NewInt32(referenceAudioId)
 				}
 
-				var masteringOptionKeys []string
-				for k := range masteringOptions {
-					masteringOptionKeys = append(masteringOptionKeys, k)
-				}
-				sort.Strings(masteringOptionKeys)
-				log.Printf("Mastering options\n")
-				for _, k := range masteringOptionKeys {
-					log.Printf("%s:%s\n", k, fmt.Sprint(masteringOptions[k]))
-				}
+				//var masteringOptionKeys []string
+				//for k := range masteringOptions {
+				//	masteringOptionKeys = append(masteringOptionKeys, k)
+				//}
+				//sort.Strings(masteringOptionKeys)
+				//log.Printf("Mastering options\n")
+				//for _, k := range masteringOptionKeys {
+				//	log.Printf("%s:%s\n", k, fmt.Sprint(masteringOptions[k]))
+				//}
 
-				mastering, _, err := client.MasteringApi.CreateMastering(auth, inputAudioId, masteringOptions)
+				mastering, _, err := client.MasteringApi.CreateMastering(auth, inputAudioId, &masteringOptions)
 
 				if err != nil {
 					log.Fatal(err)
