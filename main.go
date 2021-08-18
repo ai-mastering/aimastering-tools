@@ -11,6 +11,7 @@ import (
 	"os"
 	"sort"
 	"time"
+	"github.com/theckman/go-securerandom"
 )
 
 var (
@@ -58,7 +59,8 @@ func main() {
 	app.Copyright = "(c) 2019 Bakuage Co., Ltd."
 	app.Usage = "AI Mastering API CLI client"
 
-	var accessToken string
+	randomStr, _ := securerandom.Base64InBytes(32)
+	accessToken := "guest_" + randomStr
 	var input string
 	var output string
 	var userAgent string
@@ -71,14 +73,14 @@ func main() {
 		Destination: &userAgent,
 	}
 
-	accessTokenFlag := cli.StringFlag{
-		Name:        "access-token",
-		Usage:       "AI Mastering API Access Token (retrieved from https://aimastering.com/app/developer)",
-		EnvVar:      "AIMASTERING_ACCESS_TOKEN",
-		Hidden:      false,
-		Value:       "",
-		Destination: &accessToken,
-	}
+	//accessTokenFlag := cli.StringFlag{
+	//	Name:        "access-token",
+	//	Usage:       "AI Mastering API Access Token (retrieved from https://aimastering.com/app/developer)",
+	//	EnvVar:      "AIMASTERING_ACCESS_TOKEN",
+	//	Hidden:      false,
+	//	Value:       "",
+	//	Destination: &accessToken,
+	//}
 
 	inputFlag := cli.StringFlag{
 		Name:        "input, i",
@@ -103,9 +105,9 @@ func main() {
 			UsageText: "aimastering master --input input.wav --output output.wav [command options]",
 			HideHelp:     false,
 			Action:  func(c *cli.Context) error {
-				if accessToken == "" {
-					log.Fatal("--access-token required")
-				}
+				//if accessToken == "" {
+				//	log.Fatal("--access-token required")
+				//}
 				if input == "" {
 					log.Fatal("--input required")
 				}
@@ -143,7 +145,7 @@ func main() {
 					"sampleRate": int32(c.Int("sample-rate")),
 					"bitDepth": int32(c.Int("bit-depth")),
 					"outputFormat": c.String("output-format"),
-					"oversample": float32(c.Int("oversample")),
+					"oversample": int32(c.Int("oversample")),
 				}
 				if c.String("reference") != "" {
 					referenceAudioId := uploadAudio(client, auth, input)
@@ -284,7 +286,7 @@ func main() {
 				return nil
 			},
 			Flags: []cli.Flag{
-				accessTokenFlag,
+				//accessTokenFlag,
 				inputFlag,
 				outputFlag,
 				userAgentFlag,

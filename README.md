@@ -3,7 +3,6 @@
 This repository includes
 
 - Command line tools to execute automated mastering using [AI Mastering](https://aimastering.com) API
-- GUI front-end (Coming Soon)
 - Source code of above
 
 This repository may be helpful as to how to use the AI Mastering API.
@@ -97,8 +96,6 @@ aimastering --help
 aimastering master --help
 ```
 
-## GUI usage (Coming Soon)
-
 
 ## Requirements
 
@@ -108,6 +105,20 @@ No dependencies
 
 This tool is an auxiliary tool of [AI Mastering](https://aimastering.com).
 We do not guarantee the maintenance of this tool.
+
+## Development
+
+### Setup
+
+```bash
+go mod tidy
+```
+
+### Build
+
+```bash
+go build main.go
+```
 
 ## LICENSE
 
