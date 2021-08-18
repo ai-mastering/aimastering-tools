@@ -1,6 +1,6 @@
 module github.com/ai-mastering/aimastering-tools
 
-go 1.16
+go 1.15
 
 require github.com/urfave/cli v1.20.0
 
