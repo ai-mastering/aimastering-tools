@@ -1,6 +1,8 @@
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/ai-mastering/aimastering-go v0.0.0-20210818181814-971781263e85 h1:QYx2HaBeoVLfbCSJAQssyYBM8jjF3KTmbSXWGb9TVQo=
 github.com/ai-mastering/aimastering-go v0.0.0-20210818181814-971781263e85/go.mod h1:X9lOXTH4Z4jbAzTA0W4ixrFcUZP763Ix+xLaqG0kYxE=
+github.com/ai-mastering/aimastering-go v0.0.0-20210818192317-8f949725bf61 h1:GJ/LiIPa3/5e21MwIOk+pgbDaOUxVW0Wj+BlcJyL4eE=
+github.com/ai-mastering/aimastering-go v0.0.0-20210818192317-8f949725bf61/go.mod h1:X9lOXTH4Z4jbAzTA0W4ixrFcUZP763Ix+xLaqG0kYxE=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/protobuf v1.3.1 h1:YF8+flBXS5eO826T4nzqPrxfhQThhXl0YzfuUPu4SBg=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=

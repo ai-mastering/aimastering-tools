@@ -5,7 +5,7 @@ go 1.16
 require github.com/urfave/cli v1.20.0
 
 require (
-	github.com/ai-mastering/aimastering-go v0.0.0-20210818181814-971781263e85
+	github.com/ai-mastering/aimastering-go v0.0.0-20210818192317-8f949725bf61
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/theckman/go-securerandom v0.1.1
 	golang.org/x/net v0.0.0-20190327091125-710a502c58a2 // indirect
