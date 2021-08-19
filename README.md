@@ -53,29 +53,8 @@ eval "$(aimastering autocomplete --shell zsh)"
 
 ### Auth
 
-Please set AIMASTERING_ACCESS_TOKEN env var.
-access token can be retrieved https://aimastering.com/app/developer.
-
-```bash
-export AIMASTERING_ACCESS_TOKEN=xxx
-```
-
-Access token can also be passed by --access-token options.
-
-### Basic
-
-#### Pass access token by env var
-
-```bash
-export AIMASTERING_ACCESS_TOKEN=xxx
-aimastering master --input /path/to/input.wav --output /path/to/output.wav
-```
-
-#### Pass access token by argument
-
-```bash
-aimastering master --input /path/to/input.wav --output /path/to/output.wav --access-token=xxx
-```
+No settings are required.
+A unique guest API key is generated for each command execution, so no other user can see the data.
 
 ### Options
 
