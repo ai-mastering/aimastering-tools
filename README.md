@@ -13,14 +13,14 @@ This repository may be helpful as to how to use the AI Mastering API.
 
 Please download executable binary.
 
-https://github.com/ai-mastering/aimastering-tools/releases/download/v1.0.2/aimastering-windows-386.exe
+https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimastering-windows-386.exe
 
 ### Mac
 
 Please execute following commands.
 
 ```bash
-sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.0.2/aimastering-darwin-386" -o /usr/local/bin/aimastering
+sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimastering-darwin-386" -o /usr/local/bin/aimastering
 sudo chmod +x /usr/local/bin/aimastering
 ```
 
@@ -29,7 +29,7 @@ sudo chmod +x /usr/local/bin/aimastering
 Please execute following commands.
 
 ```bash
-sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.0.2/aimastering-linux-386" -o /usr/local/bin/aimastering
+sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimastering-linux-386" -o /usr/local/bin/aimastering
 sudo chmod +x /usr/local/bin/aimastering
 ```
 
