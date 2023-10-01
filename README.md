@@ -20,7 +20,7 @@ https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimas
 Please execute following commands.
 
 ```bash
-sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimastering-darwin-386" -o /usr/local/bin/aimastering
+sudo curl -L "https://github.com/ai-mastering/aimastering-tools/releases/download/v1.1.0/aimastering-darwin-amd64" -o /usr/local/bin/aimastering
 sudo chmod +x /usr/local/bin/aimastering
 ```
 
