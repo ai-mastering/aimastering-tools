@@ -1,3 +1,5 @@
+This project is no longer maintained. No further updates, fixes, or individual support are planned. For local desktop mastering, see https://github.com/ai-mastering/phaselimiter-gui
+
 # AI Mastering tools
 
 This repository includes
